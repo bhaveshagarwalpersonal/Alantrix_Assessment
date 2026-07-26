@@ -22,7 +22,7 @@ namespace EchoGrid.Presentation
 
         private CardRuntimeState state;
 
-        private Action<CardView>
+        public Action<CardView>
             clicked;
 
         public CardRuntimeState State

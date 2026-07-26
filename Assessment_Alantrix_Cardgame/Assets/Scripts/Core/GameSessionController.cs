@@ -5,6 +5,7 @@ using EchoGrid.Domain;
 using EchoGrid.Matching;
 using EchoGrid.Scoring;
 using EchoGrid.Presentation;
+using EchoGrid.Persistence;
 
 namespace EchoGrid.Core
 {
@@ -65,7 +66,7 @@ namespace EchoGrid.Core
             operations =
             new List<
                 RevealOperation>();
-
+        private SaveService saveService;
         private void Awake()
         {
             generator =
@@ -73,6 +74,9 @@ namespace EchoGrid.Core
 
             scoreService =
                 new ScoreService();
+
+            saveService =
+                new SaveService();
         }
 
         private void Start()
@@ -312,6 +316,109 @@ namespace EchoGrid.Core
                 gameHUD
                     ?.ShowWin();
             }
+        }
+        public void SaveGame()
+        {
+            var data =
+                new SaveData();
+
+            data.rows =
+                rows;
+
+            data.columns =
+                columns;
+
+            data.seed =
+                seed;
+
+            data.score =
+                scoreService.Score;
+
+            data.combo =
+                scoreService.Combo;
+
+            data.matches =
+                scoreService.Matches;
+
+            foreach (
+                CardView view
+                in boardView.Views)
+            {
+                if (
+                    view.State.State ==
+                    CardState.Matched)
+                {
+                    data.matchedCardIds.Add(
+                        view.State
+                            .Definition
+                            .CardId);
+                }
+            }
+
+            saveService.Save(
+                data);
+        }
+
+        public void LoadGame()
+        {
+            SaveData data =
+                saveService.Load();
+
+            if (
+                data ==
+                null)
+            {
+                return;
+            }
+
+            rows =
+                data.rows;
+
+            columns =
+                data.columns;
+
+            seed =
+                data.seed;
+
+            scoreService.Restore(
+                data.score,
+                data.combo,
+                data.matches);
+
+            board =
+                generator.Generate(
+                    rows,
+                    columns,
+                    seed);
+
+            BuildBoard();
+
+            foreach (
+                CardView view
+                in boardView.Views)
+            {
+                int cardId =
+                    view.State
+                        .Definition
+                        .CardId;
+
+                if (
+                    data.matchedCardIds
+                        .Contains(
+                            cardId))
+                {
+                    view.State
+                        .MarkMatched();
+
+                    view.ShowMatched();
+                }
+            }
+
+            gameHUD.Refresh(
+                scoreService);
+
+            gameHUD.SetSeed(
+                seed);
         }
     }
 }
