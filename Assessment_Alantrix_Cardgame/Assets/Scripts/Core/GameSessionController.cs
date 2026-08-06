@@ -6,7 +6,8 @@ using EchoGrid.Matching;
 using EchoGrid.Scoring;
 using EchoGrid.Presentation;
 using EchoGrid.Persistence;
-
+using TMPro;
+using UnityEngine.SceneManagement;
 namespace EchoGrid.Core
 {
     public sealed class GameSessionController :
@@ -67,6 +68,18 @@ namespace EchoGrid.Core
             new List<
                 RevealOperation>();
         private SaveService saveService;
+
+        // Additional Changes 
+        [Header("Input Fields")]
+        [SerializeField]
+        private TMP_InputField rowsInput;
+
+        [SerializeField]
+        private TMP_InputField columnsInput;
+
+        [SerializeField]
+        private TMP_InputField seedInput;
+
         private void Awake()
         {
             generator =
@@ -81,11 +94,15 @@ namespace EchoGrid.Core
 
         private void Start()
         {
-            StartNewGame();
+            RefreshInputFields();
+
+            //StartNewGame();
         }
 
         public void StartNewGame()
         {
+            ReadInputs();
+
             scoreService.Reset();
 
             pendingSelection.Clear();
@@ -102,6 +119,8 @@ namespace EchoGrid.Core
 
             gameHUD?.Refresh(
                 scoreService);
+            gameHUD.SetSeed(
+                seed);
         }
 
         private void BuildBoard()
@@ -380,6 +399,8 @@ namespace EchoGrid.Core
             seed =
                 data.seed;
 
+            RefreshInputFields();
+
             scoreService.Restore(
                 data.score,
                 data.combo,
@@ -393,24 +414,17 @@ namespace EchoGrid.Core
 
             BuildBoard();
 
-            foreach (
-                CardView view
-                in boardView.Views)
+           
+            foreach (CardView view in boardView.Views)
             {
-                int cardId =
-                    view.State
-                        .Definition
-                        .CardId;
+                int cardId = view.State.Definition.CardId;
 
-                if (
-                    data.matchedCardIds
-                        .Contains(
-                            cardId))
+                if (data.matchedCardIds.Contains(cardId))
                 {
-                    view.State
-                        .MarkMatched();
+                    view.State.MarkMatched();
 
-                    view.ShowMatched();
+                    Sprite sprite = GetSymbol(view.State.Definition);
+                    view.ShowMatchedInstant(sprite);
                 }
             }
 
@@ -419,6 +433,45 @@ namespace EchoGrid.Core
 
             gameHUD.SetSeed(
                 seed);
+        }
+
+        private void ReadInputs()
+        {
+            int value;
+
+            if (rowsInput != null &&
+                int.TryParse(rowsInput.text, out value))
+            {
+                rows = Mathf.Max(1, value);
+            }
+
+            if (columnsInput != null &&
+                int.TryParse(columnsInput.text, out value))
+            {
+                columns = Mathf.Max(1, value);
+            }
+
+            if (seedInput != null &&
+                int.TryParse(seedInput.text, out value))
+            {
+                seed = value;
+            }
+        }
+
+        private void RefreshInputFields()
+        {
+            if (rowsInput != null)
+                rowsInput.text = rows.ToString();
+
+            if (columnsInput != null)
+                columnsInput.text = columns.ToString();
+
+            if (seedInput != null)
+                seedInput.text = seed.ToString();
+        }
+        public void ReloadScene(int sceneNumber) 
+        {
+            SceneManager.LoadScene(sceneNumber);
         }
     }
 }

@@ -95,7 +95,17 @@ namespace EchoGrid.Presentation
             back.SetActive(
                 true);
         }
-
+        public void SetSymbol(Sprite sprite)
+        {
+            symbol.sprite = sprite;
+        }
+        public void ShowMatchedInstant(Sprite sprite)
+        {
+            symbol.sprite = sprite;
+            animator.SnapTo(true);   
+            ShowFront();
+            transform.localScale = Vector3.one * 0.96f;
+        }
         public void ShowMatched()
         {
             ShowFront();

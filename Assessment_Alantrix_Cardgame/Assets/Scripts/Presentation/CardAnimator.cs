@@ -115,5 +115,17 @@ namespace EchoGrid.Presentation
             currentRoutine =
                 null;
         }
+        public void SnapTo(bool showFront)
+        {
+            if (currentRoutine != null)
+            {
+                StopCoroutine(currentRoutine);
+                currentRoutine = null;
+            }
+
+            rotationTarget.localRotation =
+                Quaternion.Euler(0f, showFront ? 180f : 0f, 0f);
+        }
     }
+
 }

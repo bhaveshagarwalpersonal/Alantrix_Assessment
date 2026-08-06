@@ -19,7 +19,7 @@ namespace EchoGrid.Platform
             if (
                 pauseStatus)
             {
-               // gameSession.SaveGame();
+                gameSession.SaveGame();
             }
         }
 
@@ -29,7 +29,7 @@ namespace EchoGrid.Platform
             if (
                 !hasFocus)
             {
-               // gameSession.SaveGame();
+              gameSession.SaveGame();
             }
         }
 
@@ -42,12 +42,22 @@ namespace EchoGrid.Platform
                 Input.GetKeyDown(
                     KeyCode.Escape))
             {
-               // gameSession.SaveGame();
+                gameSession.SaveGame();
 
                 pausePanel
                     ?.SetActive(
                         true);
             }
         }
+        public void PauseGame() 
+        {
+            gameSession.SaveGame();
+
+            pausePanel
+                ?.SetActive(
+                    true);
+        }
     }
+
+    
 }
