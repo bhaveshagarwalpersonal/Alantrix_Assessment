@@ -11,6 +11,7 @@ I used Claude (Anthropic) during this project, specifically as follows:
   sprite issue in `CardView`, the rotation desync in `CardAnimator`, tracing the data flow across
   `GameSessionController`/`SaveService`/`BoardGenerator`, and wiring the fixes back into the project — was
   done by me, without AI assistance.
+
 -**Docs Writing:** All Docs provided were generated using Ai Tools Such as Chatgpt and Perplexity but were reviewed and edited properly by me
 
 I'm happy to walk through any specific piece of the code in more detail if useful.
